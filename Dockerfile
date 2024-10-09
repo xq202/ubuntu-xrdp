@@ -16,3 +16,5 @@ RUN find /etc/systemd/system \
     -print0 | xargs -0 rm -vf
 
 VOLUME [ "/sys/fs/cgroup" ]
+
+ENTRYPOINT [ "/lib/systemd/systemd" ]
