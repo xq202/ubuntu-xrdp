@@ -3,10 +3,9 @@ FROM ubuntu:20.04
 ENV container=docker \
     DEBIAN_FRONTEND=noninteractive
 
-RUN INSTALL_PKGS='findutils iproute2 python3 python3-apt sudo systemd' \
+RUN INSTALL_PKGS='findutils iproute2 python3 python3-apt sudo systemd git' \
     && apt-get update && apt-get install $INSTALL_PKGS -y --no-install-recommends \
     && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-RUN apt install git -y
 RUN find /etc/systemd/system \
     /lib/systemd/system \
     -path '*.wants/*' \
