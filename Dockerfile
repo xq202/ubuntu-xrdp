@@ -18,3 +18,5 @@ RUN find /etc/systemd/system \
 VOLUME [ "/sys/fs/cgroup" ]
 
 ENTRYPOINT [ "/lib/systemd/systemd" ]
+
+CMD bash
