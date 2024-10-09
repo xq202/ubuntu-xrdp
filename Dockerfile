@@ -1,7 +1,5 @@
 FROM ubuntu:20.04
 
-LABEL maintainer='Anton Melekhin'
-
 ENV container=docker \
     DEBIAN_FRONTEND=noninteractive
 
@@ -18,5 +16,3 @@ RUN find /etc/systemd/system \
     -print0 | xargs -0 rm -vf
 
 VOLUME [ "/sys/fs/cgroup" ]
-
-ENTRYPOINT [ "/lib/systemd/systemd" ]
