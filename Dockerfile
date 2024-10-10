@@ -1,21 +1,41 @@
-FROM ubuntu:20.04
+FROM scratch
+COPY --from=qemux/qemu-docker:6.05 / /
 
-ENV container=docker \
-    DEBIAN_FRONTEND=noninteractive
+ARG VERSION_ARG="0.0"
+ARG DEBCONF_NOWARNINGS="yes"
+ARG DEBIAN_FRONTEND="noninteractive"
+ARG DEBCONF_NONINTERACTIVE_SEEN="true"
 
-RUN INSTALL_PKGS='findutils iproute2 python3 python3-apt sudo systemd git' \
-    && apt-get update && apt-get install $INSTALL_PKGS -y --no-install-recommends \
-    && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-RUN find /etc/systemd/system \
-    /lib/systemd/system \
-    -path '*.wants/*' \
-    -not -name '*journald*' \
-    -not -name '*systemd-tmpfiles*' \
-    -not -name '*systemd-user-sessions*' \
-    -print0 | xargs -0 rm -vf
+RUN set -eu && \
+    apt-get update && \
+    apt-get --no-install-recommends -y install \
+        bc \
+        curl \
+        7zip \
+        wsdd \
+        samba \
+        xz-utils \
+        wimtools \
+        dos2unix \
+        cabextract \
+        genisoimage \
+        libxml2-utils && \
+    apt-get clean && \
+    echo "$VERSION_ARG" > /run/version && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-VOLUME [ "/sys/fs/cgroup" ]
+COPY --chmod=755 ./src /run/
+COPY --chmod=755 ./assets /run/assets
 
-ENTRYPOINT [ "/lib/systemd/systemd" ]
+ADD --chmod=755 https://raw.githubusercontent.com/christgau/wsdd/v0.8/src/wsdd.py /usr/sbin/wsdd
+ADD --chmod=664 https://github.com/qemus/virtiso-whql/releases/download/v1.9.43-0/virtio-win-1.9.43.tar.xz /drivers.txz
 
-CMD bash
+EXPOSE 8006 3389
+VOLUME /storage
+
+ENV RAM_SIZE="4G"
+ENV CPU_CORES="2"
+ENV DISK_SIZE="64G"
+ENV VERSION="win11"
+
+ENTRYPOINT ["/usr/bin/tini", "-s", "/run/entry.sh"]
