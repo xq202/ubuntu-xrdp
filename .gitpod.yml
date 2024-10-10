@@ -1,4 +1,5 @@
 image:
   file: Dockerfile
-  command: |
-    docker-compose up
+tasks:
+  - command: |
+      docker-compose up
