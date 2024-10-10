@@ -1,3 +1,8 @@
-tasks:
-  - command: |
-      docker-compose up
+image:
+  file: Dockerfile
+
+ports:
+  - port: 8006
+    onOpen: open-preview
+  - port: 3389
+    onOpen: open-preview
